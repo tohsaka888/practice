@@ -1,0 +1,26 @@
+.content {
+    width: 70%;
+    border:1px solid #cecece;
+    height: 1000px;
+    float: left;
+}
+
+.banner {
+    display: flex;
+    width: 100%;
+    float: left!important;
+}
+
+.icon {
+    margin-top: 150px;
+    font-weight: bold;
+}
+
+.div {
+    background-image: linear-gradient(#f8f7f7, #787777);
+    border-bottom:2px solid gray;
+}
+.div:hover{
+    background-image: linear-gradient(#f6e8e8, #fc0329);
+    border-bottom:2px solid gray;
+}
