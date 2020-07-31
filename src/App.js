@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState} from 'react';
 import './App.css';
+import {Layout} from 'antd'
+import Header from "./components/header";
+import Content from "./components/content";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const [banner,setBanner] = useState([]);
+
+    useEffect(()=>{
+        const send = async () => {
+            const res = await fetch("http://localhost:3000/banner");
+            const data = await res.json();
+            console.log(data);
+            setBanner(data.banners);
+        }
+        send();
+    },[])
+
+    return (
+        <div className="App">
+            <Layout>
+                <Header />
+                {console.log(banner)}
+                <Content banner={banner}/>
+            </Layout>
+        </div>
+    );
 }
 
 export default App;
