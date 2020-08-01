@@ -17,7 +17,7 @@ const Header = ({visible, setVisible}) => {
                 'content-type':'application/x-www-form-urlencoded'
             },
             body:JSON.stringify({"phone":phone,"password":password}),
-            xhrFields: { withCredentials: true },
+            withCredentials: true,
             mode : "cors",
         });
         const data = await res.json();
