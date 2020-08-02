@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Avatar, Button, Form, Input, Layout, Menu, Modal} from 'antd'
 import './header.css'
 import {TaobaoCircleFilled} from "@ant-design/icons"
+import {BrowserRouter as Router, Link} from 'react-router-dom'
 
 const Header = ({visible, setVisible, setUserLike, loginStatus}) => {
 
@@ -25,6 +26,7 @@ const Header = ({visible, setVisible, setUserLike, loginStatus}) => {
         setVisible(false);
         const res1 = await fetch("http://localhost:3000/recommend/resource", {
             credentials: "include",
+            mode : "cors",
         });
         const data1 = await res1.json();
         console.log(data.cookie);
@@ -32,8 +34,12 @@ const Header = ({visible, setVisible, setUserLike, loginStatus}) => {
         setUserLike(data1.recommend);
     }
 
+    // const search = async () => {
+    //     const res = await fetch(`http://localhost:3000/search`);
+    // }
+
     return (
-        <div>
+        <Router>
             {console.log(loginStatus)}
             <Header style={{height: "68px", display: "flex", textAlign: "center"}}>
                 <Menu mode="horizontal" theme='dark' className="menu" defaultSelectedKeys={["find"]}>
@@ -51,9 +57,12 @@ const Header = ({visible, setVisible, setUserLike, loginStatus}) => {
                     <Item key="shop"><span>商城</span></Item>
                     <Item key="musician"><span>音乐人</span></Item>
                 </Menu>
-                <div style={{marginTop: "17px", marginLeft: "20px"}}><Search placeholder="音乐/视频/电台/用户 "
-                                                                             onSearch={value => console.log("未搜索")}
-                                                                             enterButton style={{width: "250px"}}/>
+                <div style={{marginTop: "17px", marginLeft: "20px"}}>
+                    <Link to='/search'>
+                        <Search placeholder="音乐/视频/电台/用户 "
+                                onSearch={value => console.log("未搜索")}
+                                enterButton style={{width: "250px"}}/>
+                    </Link>
                 </div>
                 <Button shape="round" style={{
                     marginTop: "17px",
@@ -82,7 +91,7 @@ const Header = ({visible, setVisible, setUserLike, loginStatus}) => {
                     </Form>
                 </Modal>
             </Header>
-        </div>
+        </Router>
     );
 };
 
