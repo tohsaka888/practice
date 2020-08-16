@@ -1,7 +1,9 @@
 .content {
-    width: 70%;
+    width: 70vw;
     border:1px solid #cecece;
     float: left;
+    margin-left: 15vw;
+    margin-right: 15vw;
 }
 
 .banner {
@@ -11,7 +13,7 @@
 }
 
 .icon {
-    margin-top: 150px;
+    margin-top: 20vh;
     font-weight: bold;
 }
 
@@ -23,3 +25,14 @@
     background-image: linear-gradient(#f6e8e8, #fc0329);
     border-bottom:2px solid gray;
 }
+
+.playlist:hover {
+    cursor: pointer;
+}
+
+.songs:hover{
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+
