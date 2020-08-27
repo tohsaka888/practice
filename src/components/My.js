@@ -39,7 +39,7 @@ const My = ({mymusic, comment, setMusicUrl, setComment, setMymusic}) => {
                     history.push(`/mymusic/${key}/${cookie}`);
                 }} defaultSelectedKeys={[loc.pathname.split('/')[2]]} defaultOpenKeys={['0']} >
                     <SubMenu title={"创建的歌单"} style={{fontSize: "18px", fontFamily: "text"}} key={0}>
-                        {mymusic.playlist && mymusic.playlist.map((item, index) => {
+                        {mymusic.playlist && mymusic.playlist.map((item) => {
                             return (
                                 <Item key={item.id} style={{fontFamily: "微软雅黑"}}>{item.name}</Item>
                             )
