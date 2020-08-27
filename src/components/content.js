@@ -3,8 +3,9 @@ import {Carousel, Col, Layout, Menu, Row, Tabs, Collapse} from "antd"
 import {EnvironmentOutlined, LeftOutlined, RightOutlined} from "@ant-design/icons"
 import {useHistory} from 'react-router-dom'
 import "./content.css"
+import Toplist from "./toplist";
 
-const Content = ({banner, playlist, img, userLike, weekData, loginStatus, setPlay, setComment, artist, artist1, artist2, artist3}) => {
+const Content = ({setSongUrl, toplistSongs2, toplistSongs1, toplistSongs, toplist1, banner, playlist, img, userLike, weekData, loginStatus, setPlay, setComment, artist, artist1, artist2, artist3, cookie}) => {
 
     const {TabPane} = Tabs;
     const {Item} = Menu;
@@ -12,30 +13,31 @@ const Content = ({banner, playlist, img, userLike, weekData, loginStatus, setPla
     const history = useHistory();
 
     const playlistDetail = async (id) => {
-        const res = await fetch(`http://localhost:3000/playlist/detail?id=${id}`, {
+        const res = await fetch(`http://localhost:3000/playlist/detail?id=${id}&cookie=${cookie}`, {
             credentials: "include",
             mode: "cors"
         });
         const data = await res.json();
         setPlay(data.playlist);
-        const res1 = await fetch(`http://localhost:3000/comment/playlist?id=${id}`);
+        const res1 = await fetch(`http://localhost:3000/comment/playlist?id=${id}&cookie=${cookie}`);
         const data1 = await res1.json();
         setComment(data1);
-        history.push(`/playlist/?id=${id}`);
+        history.push(`/playlist/${id}/${cookie}`);
     }
 
     return (
         <div>
-            <div style={{display:"inline-flex",height:"52.2vh",overflow:"hidden"}} className="lunbo">
+            <div style={{display: "inline-flex", height: "52.2vh", overflow: "hidden"}} className="lunbo">
                 <div className="div" style={{width: "15vw", height: "52.2vh"}}>
                     <LeftOutlined style={{fontSize: "51px", float: "right", marginRight: "20px"}} className="icon"
                                   onClick={() => {
                                       img.current.prev()
                                   }}/>
                 </div>
-                <Carousel autoplay ref={img} style={{width:"70vw"}}>
+                <Carousel autoplay ref={img} style={{width: "70vw"}}>
                     {banner.map((item, index) => {
-                        return <img src={item.imageUrl} key={index} alt={index} style={{width:"70vw",height:"52vh"}}/>
+                        return <img src={item.imageUrl} key={index} alt={index}
+                                    style={{width: "70vw", height: "52vh"}}/>
                     })}
                 </Carousel>
                 <div className="div" style={{width: "15vw", height: "52.2vh"}}><RightOutlined
@@ -44,60 +46,58 @@ const Content = ({banner, playlist, img, userLike, weekData, loginStatus, setPla
                 }}/></div>
             </div>
             <Content className="content" style={{background: "white"}}>
-                <Menu mode="horizontal" style={{ borderBottom: "2px solid #C10D0C"}}>
+                <Menu mode="horizontal" style={{borderBottom: "2px solid #C10D0C"}}>
                     <Item disabled icon={<EnvironmentOutlined style={{color: "#C10D0C"}}/>}><span
                         style={{fontSize: "20px", color: "black"}}>热门推荐</span></Item>
                 </Menu>
                 <Row style={{marginTop: "20px"}}>
-                    {playlist.map((item, index) => {
-                        if (index < 6) {
-                            return (
-                                <Col span={4} key={index}>
-                                    <img className="playlist" src={item.coverImgUrl} style={{
-                                        width: "140px",
-                                        height: "140px",
-                                        borderRadius: "50%",
-                                        boxShadow: "10px 10px 5px #888888"
-                                    }} alt={index} onClick={() => {
-                                        playlistDetail(item.id)
-                                    }}/>
-                                    <div className="playlist" style={{
-                                        textAlign: "left",
-                                        width: "140px",
-                                        marginLeft: "20px",
-                                        marginTop: "10px"
-                                    }} onClick={() => {
-                                        playlistDetail(item.id)
-                                    }}>{item.name}</div>
-                                </Col>
-                            )
-                        }
+                    {playlist.slice(0, 6).map((item, index) => {
+
+                        return (
+                            <Col span={4} key={index}>
+                                <img className="playlist" src={item.coverImgUrl} style={{
+                                    width: "140px",
+                                    height: "140px",
+                                    borderRadius: "50%",
+                                    boxShadow: "10px 10px 5px #888888"
+                                }} alt={index} onClick={() => {
+                                    playlistDetail(item.id)
+                                }}/>
+                                <div className="playlist" style={{
+                                    textAlign: "left",
+                                    width: "140px",
+                                    marginLeft: "20px",
+                                    marginTop: "10px"
+                                }} onClick={() => {
+                                    playlistDetail(item.id)
+                                }}>{item.name}</div>
+                            </Col>
+                        )
                     })}
                 </Row>
                 <Row>
-                    {playlist.map((item, index) => {
-                        if (index >= 6) {
-                            return (
-                                <Col span={4} key={index} style={{marginTop: "20px"}}>
-                                    <img className="playlist" src={item.coverImgUrl} style={{
-                                        width: "140px",
-                                        height: "140px",
-                                        borderRadius: "50%",
-                                        boxShadow: "10px 10px 5px #888888"
-                                    }} alt={index} onClick={() => {
-                                        playlistDetail(item.id)
-                                    }}/>
-                                    <div className="playlist" style={{
-                                        textAlign: "left",
-                                        width: "140px",
-                                        marginLeft: "20px",
-                                        marginTop: "10px"
-                                    }} onClick={() => {
-                                        playlistDetail(item.id)
-                                    }}>{item.name}</div>
-                                </Col>
-                            )
-                        }
+                    {playlist.slice(6, 12).map((item, index) => {
+                        return (
+                            <Col span={4} key={index} style={{marginTop: "20px"}}>
+                                <img className="playlist" src={item.coverImgUrl} style={{
+                                    width: "140px",
+                                    height: "140px",
+                                    borderRadius: "50%",
+                                    boxShadow: "10px 10px 5px #888888"
+                                }} alt={index} onClick={() => {
+                                    playlistDetail(item.id)
+                                }}/>
+                                <div className="playlist" style={{
+                                    textAlign: "left",
+                                    width: "140px",
+                                    marginLeft: "20px",
+                                    marginTop: "10px"
+                                }} onClick={() => {
+                                    playlistDetail(item.id)
+                                }}>{item.name}</div>
+                            </Col>
+                        )
+
                     })}
                 </Row>
                 {loginStatus.code === 200 && loginStatus && userLike &&
@@ -107,29 +107,27 @@ const Content = ({banner, playlist, img, userLike, weekData, loginStatus, setPla
                 </Menu>}
                 {loginStatus.code === 200 && loginStatus && userLike &&
                 <Row>
-                    {userLike.map((item, index) => {
-                        if (index < 6) {
-                            return (
-                                <Col span={4} key={index} style={{marginTop: "20px"}}>
-                                    <img className="playlist" src={item.picUrl} style={{
-                                        width: "140px",
-                                        height: "140px",
-                                        borderRadius: "15px",
-                                        boxShadow: "10px 10px 5px #888888"
-                                    }} alt={index} onClick={() => {
-                                        playlistDetail(item.id)
-                                    }}/>
-                                    <div className="playlist" style={{
-                                        textAlign: "left",
-                                        width: "140px",
-                                        marginLeft: "20px",
-                                        marginTop: "10px"
-                                    }} onClick={() => {
-                                        playlistDetail(item.id)
-                                    }}>{item.name}</div>
-                                </Col>
-                            )
-                        }
+                    {userLike.slice(0, 6).map((item, index) => {
+                        return (
+                            <Col span={4} key={index} style={{marginTop: "20px"}}>
+                                <img className="playlist" src={item.picUrl} style={{
+                                    width: "140px",
+                                    height: "140px",
+                                    borderRadius: "15px",
+                                    boxShadow: "10px 10px 5px #888888"
+                                }} alt={index} onClick={() => {
+                                    playlistDetail(item.id)
+                                }}/>
+                                <div className="playlist" style={{
+                                    textAlign: "left",
+                                    width: "140px",
+                                    marginLeft: "20px",
+                                    marginTop: "10px"
+                                }} onClick={() => {
+                                    playlistDetail(item.id)
+                                }}>{item.name}</div>
+                            </Col>
+                        )
                     })}
                 </Row>
                 }
@@ -145,167 +143,171 @@ const Content = ({banner, playlist, img, userLike, weekData, loginStatus, setPla
                 }} tabBarStyle={{marginLeft: "auto", marginRight: "auto"}} tabBarGutter={40} animated>
                     <TabPane tab="1" key={1}>
                         <div style={{display: "flex"}}>
-                            {weekData.map((item, index) => {
-                                if (index < 5) {
-                                    return (
-                                        <div style={{marginLeft: "30px"}} key={index}>
-                                            <img className="playlist" src={item.picUrl} style={{
-                                                width: "140px",
-                                                height: "140px",
-                                                borderRadius: "50%",
-                                                boxShadow: "10px 10px 5px #888888"
-                                            }} alt={index} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}/>
-                                            <div className="playlist" style={{
-                                                marginTop: "20px",
-                                                fontFamily: "text",
-                                                fontSize: "18px"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}>{item.artist.name}</div>
-                                        </div>
-                                    )
-                                }
+                            {weekData.slice(0, 5).map((item, index) => {
+                                return (
+                                    <div style={{marginLeft: "30px"}} key={index}>
+                                        <img className="playlist" src={item.picUrl} style={{
+                                            width: "140px",
+                                            height: "140px",
+                                            borderRadius: "50%",
+                                            boxShadow: "10px 10px 5px #888888"
+                                        }} alt={index} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}/>
+                                        <div className="playlist" style={{
+                                            marginTop: "20px",
+                                            fontFamily: "text",
+                                            fontSize: "18px"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}>{item.artist.name}</div>
+                                    </div>
+                                )
                             })}
                         </div>
                     </TabPane>
                     <TabPane tab="2" key={2}>
                         <div style={{display: "flex"}}>
-                            {weekData.map((item, index) => {
-                                if (index >= 5 && index < 10) {
-                                    return (
-                                        <div style={{marginLeft: "30px"}} key={index}>
-                                            <img className="playlist" src={item.picUrl} style={{
-                                                width: "140px",
-                                                height: "140px",
-                                                borderRadius: "50%",
-                                                boxShadow: "10px 10px 5px #888888"
-                                            }} alt={index} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}/>
-                                            <div className="playlist" style={{
-                                                marginTop: "20px",
-                                                fontFamily: "text",
-                                                fontSize: "18px"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}>{item.artist.name}</div>
-                                        </div>
-                                    )
-                                }
+                            {weekData.slice(5, 10).map((item, index) => {
+                                return (
+                                    <div style={{marginLeft: "30px"}} key={index}>
+                                        <img className="playlist" src={item.picUrl} style={{
+                                            width: "140px",
+                                            height: "140px",
+                                            borderRadius: "50%",
+                                            boxShadow: "10px 10px 5px #888888"
+                                        }} alt={index} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}/>
+                                        <div className="playlist" style={{
+                                            marginTop: "20px",
+                                            fontFamily: "text",
+                                            fontSize: "18px"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}>{item.artist.name}</div>
+                                    </div>
+                                )
                             })}
                         </div>
                     </TabPane>
                     <TabPane tab="3" key={3}>
                         <div style={{display: "flex"}}>
-                            {weekData.map((item, index) => {
-                                if (index >= 10 && index < 15) {
-                                    return (
-                                        <div style={{marginLeft: "30px"}} key={index}>
-                                            <img className="playlist" src={item.picUrl} style={{
-                                                width: "140px",
-                                                height: "140px",
-                                                borderRadius: "50%",
-                                                boxShadow: "10px 10px 5px #888888"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }} alt={index}/>
-                                            <div className="playlist" style={{
-                                                marginTop: "20px",
-                                                fontFamily: "text",
-                                                fontSize: "18px"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}>{item.artist.name}</div>
-                                        </div>
-                                    )
-                                }
+                            {weekData.slice(10, 15).map((item, index) => {
+
+                                return (
+                                    <div style={{marginLeft: "30px"}} key={index}>
+                                        <img className="playlist" src={item.picUrl} style={{
+                                            width: "140px",
+                                            height: "140px",
+                                            borderRadius: "50%",
+                                            boxShadow: "10px 10px 5px #888888"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }} alt={index}/>
+                                        <div className="playlist" style={{
+                                            marginTop: "20px",
+                                            fontFamily: "text",
+                                            fontSize: "18px"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}>{item.artist.name}</div>
+                                    </div>
+                                )
                             })}
                         </div>
                     </TabPane>
                     <TabPane tab="4" key={4}>
                         <div style={{display: "flex"}}>
-                            {weekData.map((item, index) => {
-                                if (index >= 15 && index < 20) {
-                                    return (
-                                        <div style={{marginLeft: "30px"}} key={index}>
-                                            <img className="playlist" src={item.picUrl} style={{
-                                                width: "140px",
-                                                height: "140px",
-                                                borderRadius: "50%",
-                                                boxShadow: "10px 10px 5px #888888"
-                                            }} alt={index} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}/>
-                                            <div className="playlist" style={{
-                                                marginTop: "20px",
-                                                fontFamily: "text",
-                                                fontSize: "18px"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}>{item.artist.name}</div>
-                                        </div>
-                                    )
-                                }
+                            {weekData.slice(15, 20).map((item, index) => {
+
+                                return (
+                                    <div style={{marginLeft: "30px"}} key={index}>
+                                        <img className="playlist" src={item.picUrl} style={{
+                                            width: "140px",
+                                            height: "140px",
+                                            borderRadius: "50%",
+                                            boxShadow: "10px 10px 5px #888888"
+                                        }} alt={index} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}/>
+                                        <div className="playlist" style={{
+                                            marginTop: "20px",
+                                            fontFamily: "text",
+                                            fontSize: "18px"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}>{item.artist.name}</div>
+                                    </div>
+                                )
                             })}
                         </div>
                     </TabPane>
                     <TabPane tab="5" key={5}>
                         <div style={{display: "flex"}}>
-                            {weekData.map((item, index) => {
-                                if (index >= 20 && index < 25) {
-                                    return (
-                                        <div style={{marginLeft: "30px"}} key={index}>
-                                            <img className="playlist" src={item.picUrl} style={{
-                                                width: "140px",
-                                                height: "140px",
-                                                borderRadius: "50%",
-                                                boxShadow: "10px 10px 5px #888888"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }} alt={index}/>
-                                            <div className="playlist" style={{
-                                                marginTop: "20px",
-                                                fontFamily: "text",
-                                                fontSize: "18px"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}>{item.artist.name}</div>
-                                        </div>
-                                    )
-                                }
+                            {weekData.slice(20, 25).map((item, index) => {
+                                return (
+                                    <div style={{marginLeft: "30px"}} key={index}>
+                                        <img className="playlist" src={item.picUrl} style={{
+                                            width: "140px",
+                                            height: "140px",
+                                            borderRadius: "50%",
+                                            boxShadow: "10px 10px 5px #888888"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }} alt={index}/>
+                                        <div className="playlist" style={{
+                                            marginTop: "20px",
+                                            fontFamily: "text",
+                                            fontSize: "18px"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}>{item.artist.name}</div>
+                                    </div>
+                                )
                             })}
                         </div>
                     </TabPane>
                     <TabPane tab="6" key={6}>
                         <div style={{display: "flex"}}>
-                            {weekData.map((item, index) => {
-                                if (index >= 25 && index < 30) {
-                                    return (
-                                        <div style={{marginLeft: "30px"}} key={index}>
-                                            <img className="playlist" src={item.picUrl} style={{
-                                                width: "140px",
-                                                height: "140px",
-                                                borderRadius: "50%",
-                                                boxShadow: "10px 10px 5px #888888"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }} alt={index}/>
-                                            <div className="playlist" style={{
-                                                marginTop: "20px",
-                                                fontFamily: "text",
-                                                fontSize: "18px"
-                                            }} onClick={() => {
-                                                playlistDetail(item.id)
-                                            }}>{item.artist.name}</div>
-                                        </div>
-                                    )
-                                }
+                            {weekData.slice(25, 30).map((item, index) => {
+                                return (
+                                    <div style={{marginLeft: "30px"}} key={index}>
+                                        <img className="playlist" src={item.picUrl} style={{
+                                            width: "140px",
+                                            height: "140px",
+                                            borderRadius: "50%",
+                                            boxShadow: "10px 10px 5px #888888"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }} alt={index}/>
+                                        <div className="playlist" style={{
+                                            marginTop: "20px",
+                                            fontFamily: "text",
+                                            fontSize: "18px"
+                                        }} onClick={() => {
+                                            playlistDetail(item.id)
+                                        }}>{item.artist.name}</div>
+                                    </div>
+                                )
                             })}
                         </div>
                     </TabPane>
                 </Tabs>
+                <Menu mode="horizontal" style={{borderBottom: "2px solid #C10D0C"}}>
+                    <Item disabled icon={<EnvironmentOutlined style={{color: "#C10D0C"}}/>}><span
+                        style={{fontSize: "20px", color: "black"}}>榜单</span></Item>
+                </Menu>
+                <div style={{height: "20px"}}/>
+                <div style={{
+                    background: "whitesmoke",
+                    marginLeft: "100px",
+                    marginRight: "100px",
+                    padding: "20px",
+                    border: "1px solid #d9d9d9"
+                }}>{toplist1 &&
+                <Toplist setMusicUrl={setSongUrl} toplist1={toplist1} toplistSongs={toplistSongs}
+                         toplistSongs1={toplistSongs1} toplistSongs2={toplistSongs2}/>}</div>
                 <div style={{height: "40px"}}/>
                 <Menu mode="horizontal" style={{borderBottom: "2px solid #C10D0C"}}>
                     <Item disabled icon={<EnvironmentOutlined style={{color: "#C10D0C"}}/>}><span
@@ -313,191 +315,188 @@ const Content = ({banner, playlist, img, userLike, weekData, loginStatus, setPla
                 </Menu>
                 <Collapse defaultActiveKey={1} accordion style={{marginTop: "20px", fontFamily: "title"}}>
                     <Collapse.Panel key={1} header="中国最受欢迎歌手列表" style={{fontSize: "20px"}}>
-                        {artist.map((item, index) => {
-                            if (index < 10) {
-                                return (
-                                    <Row key={index} style={{
-                                        display: "flex",
-                                        marginBottom: "20px",
-                                        borderBottom: "1px solid #DCDCDC"
-                                    }}>
-                                        <Col span={3}><img src={item.img1v1Url}
-                                                           style={{
-                                                               width: "56px",
-                                                               height: "56px",
-                                                               borderRadius: "50%",
-                                                               float: "left",
-                                                               display: "block"
-                                                           }}/></Col>
-                                        <Col span={6}>
-                                            <div style={{
-                                                float: "left",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "text",
-                                                marginLeft: "50px"
-                                            }}>{item.name}</div>
-                                        </Col>
-                                        <Col span={8}>
-                                            <div style={{
-                                                marginLeft: "30px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"Top" + (index + 1)}</div>
-                                        </Col>
-                                        <Col>
-                                            <div style={{
-                                                marginLeft: "50px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"人气指数：" + item.score}</div>
-                                        </Col>
-                                    </Row>
-                                )
-                            }
+                        {artist.slice(0, 10).map((item, index) => {
+                            return (
+                                <Row key={index} style={{
+                                    display: "flex",
+                                    marginBottom: "20px",
+                                    borderBottom: "1px solid #DCDCDC"
+                                }}>
+                                    <Col span={3}><img src={item.img1v1Url}
+                                                       alt={item.img1v1Url}
+                                                       style={{
+                                                           width: "56px",
+                                                           height: "56px",
+                                                           borderRadius: "50%",
+                                                           float: "left",
+                                                           display: "block"
+                                                       }}/></Col>
+                                    <Col span={6}>
+                                        <div style={{
+                                            float: "left",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "text",
+                                            marginLeft: "50px"
+                                        }}>{item.name}</div>
+                                    </Col>
+                                    <Col span={8}>
+                                        <div style={{
+                                            marginLeft: "30px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"Top" + (index + 1)}</div>
+                                    </Col>
+                                    <Col>
+                                        <div style={{
+                                            marginLeft: "50px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"人气指数：" + item.score}</div>
+                                    </Col>
+                                </Row>
+                            )
                         })}
                     </Collapse.Panel>
                     <Collapse.Panel key={2} header="欧美最受欢迎歌手列表" style={{fontSize: "20px"}}>
-                        {artist1.map((item, index) => {
-                            if (index < 10) {
-                                return (
-                                    <Row key={index} style={{
-                                        display: "flex",
-                                        marginBottom: "20px",
-                                        borderBottom: "1px solid #DCDCDC"
-                                    }}>
-                                        <Col span={3}><img src={item.img1v1Url}
-                                                           style={{
-                                                               width: "56px",
-                                                               height: "56px",
-                                                               borderRadius: "50%",
-                                                               float: "left",
-                                                               display: "block"
-                                                           }}/></Col>
-                                        <Col span={6}>
-                                            <div style={{
-                                                float: "left",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "text",
-                                                marginLeft: "50px"
-                                            }}>{item.name}</div>
-                                        </Col>
-                                        <Col span={8}>
-                                            <div style={{
-                                                marginLeft: "30px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"Top" + (index + 1)}</div>
-                                        </Col>
-                                        <Col>
-                                            <div style={{
-                                                marginLeft: "50px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"人气指数：" + item.score}</div>
-                                        </Col>
-                                    </Row>
-                                )
-                            }
+                        {artist1.slice(0, 10).map((item, index) => {
+                            return (
+                                <Row key={index} style={{
+                                    display: "flex",
+                                    marginBottom: "20px",
+                                    borderBottom: "1px solid #DCDCDC"
+                                }}>
+                                    <Col span={3}><img src={item.img1v1Url}
+                                                       alt={item.img1v1Url}
+                                                       style={{
+                                                           width: "56px",
+                                                           height: "56px",
+                                                           borderRadius: "50%",
+                                                           float: "left",
+                                                           display: "block"
+                                                       }}/></Col>
+                                    <Col span={6}>
+                                        <div style={{
+                                            float: "left",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "text",
+                                            marginLeft: "50px"
+                                        }}>{item.name}</div>
+                                    </Col>
+                                    <Col span={8}>
+                                        <div style={{
+                                            marginLeft: "30px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"Top" + (index + 1)}</div>
+                                    </Col>
+                                    <Col>
+                                        <div style={{
+                                            marginLeft: "50px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"人气指数：" + item.score}</div>
+                                    </Col>
+                                </Row>
+                            )
                         })}
                     </Collapse.Panel>
                     <Collapse.Panel key={3} header="韩国最受欢迎歌手列表" style={{fontSize: "20px"}}>
-                        {artist2.map((item, index) => {
-                            if (index < 10) {
-                                return (
-                                    <Row key={index} style={{
-                                        display: "flex",
-                                        marginBottom: "20px",
-                                        borderBottom: "1px solid #DCDCDC"
-                                    }}>
-                                        <Col span={3}><img src={item.img1v1Url}
-                                                           style={{
-                                                               width: "56px",
-                                                               height: "56px",
-                                                               borderRadius: "50%",
-                                                               float: "left",
-                                                               display: "block"
-                                                           }}/></Col>
-                                        <Col span={6}>
-                                            <div style={{
-                                                float: "left",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "text",
-                                                marginLeft: "50px"
-                                            }}>{item.name}</div>
-                                        </Col>
-                                        <Col span={8}>
-                                            <div style={{
-                                                marginLeft: "30px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"Top" + (index + 1)}</div>
-                                        </Col>
-                                        <Col>
-                                            <div style={{
-                                                marginLeft: "50px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"人气指数：" + item.score}</div>
-                                        </Col>
-                                    </Row>
-                                )
-                            }
+                        {artist2.slice(0, 10).map((item, index) => {
+                            return (
+                                <Row key={index} style={{
+                                    display: "flex",
+                                    marginBottom: "20px",
+                                    borderBottom: "1px solid #DCDCDC"
+                                }}>
+                                    <Col span={3}><img src={item.img1v1Url}
+                                                       alt={item.img1v1Url}
+                                                       style={{
+                                                           width: "56px",
+                                                           height: "56px",
+                                                           borderRadius: "50%",
+                                                           float: "left",
+                                                           display: "block"
+                                                       }}/></Col>
+                                    <Col span={6}>
+                                        <div style={{
+                                            float: "left",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "text",
+                                            marginLeft: "50px"
+                                        }}>{item.name}</div>
+                                    </Col>
+                                    <Col span={8}>
+                                        <div style={{
+                                            marginLeft: "30px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"Top" + (index + 1)}</div>
+                                    </Col>
+                                    <Col>
+                                        <div style={{
+                                            marginLeft: "50px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"人气指数：" + item.score}</div>
+                                    </Col>
+                                </Row>
+                            )
                         })}
                     </Collapse.Panel>
                     <Collapse.Panel key={4} header="日本最受欢迎歌手列表" style={{fontSize: "20px"}}>
-                        {artist3.map((item, index) => {
-                            if (index < 10) {
-                                return (
-                                    <Row key={index} style={{
-                                        display: "flex",
-                                        marginBottom: "20px",
-                                        borderBottom: "1px solid #DCDCDC"
-                                    }}>
-                                        <Col span={3}><img src={item.img1v1Url}
-                                                           style={{
-                                                               width: "56px",
-                                                               height: "56px",
-                                                               borderRadius: "50%",
-                                                               float: "left",
-                                                               display: "block"
-                                                           }}/></Col>
-                                        <Col span={6}>
-                                            <div style={{
-                                                float: "left",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "text",
-                                                marginLeft: "50px"
-                                            }}>{item.name}</div>
-                                        </Col>
-                                        <Col span={8}>
-                                            <div style={{
-                                                marginLeft: "30px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"Top" + (index + 1)}</div>
-                                        </Col>
-                                        <Col>
-                                            <div style={{
-                                                marginLeft: "50px",
-                                                marginTop: "10px",
-                                                fontSize: "20px",
-                                                fontFamily: "title2"
-                                            }}>{"人气指数：" + item.score}</div>
-                                        </Col>
-                                    </Row>
-                                )
-                            }
+                        {artist3.slice(0, 10).map((item, index) => {
+
+                            return (
+                                <Row key={index} style={{
+                                    display: "flex",
+                                    marginBottom: "20px",
+                                    borderBottom: "1px solid #DCDCDC"
+                                }}>
+                                    <Col span={3}><img src={item.img1v1Url}
+                                                       alt={item.img1v1Url}
+                                                       style={{
+                                                           width: "56px",
+                                                           height: "56px",
+                                                           borderRadius: "50%",
+                                                           float: "left",
+                                                           display: "block"
+                                                       }}/></Col>
+                                    <Col span={6}>
+                                        <div style={{
+                                            float: "left",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "text",
+                                            marginLeft: "50px"
+                                        }}>{item.name}</div>
+                                    </Col>
+                                    <Col span={8}>
+                                        <div style={{
+                                            marginLeft: "30px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"Top" + (index + 1)}</div>
+                                    </Col>
+                                    <Col>
+                                        <div style={{
+                                            marginLeft: "50px",
+                                            marginTop: "10px",
+                                            fontSize: "20px",
+                                            fontFamily: "title2"
+                                        }}>{"人气指数：" + item.score}</div>
+                                    </Col>
+                                </Row>
+                            )
                         })}
                     </Collapse.Panel>
                 </Collapse>

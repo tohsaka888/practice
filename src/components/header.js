@@ -1,19 +1,18 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import {Avatar, Button, Form, Input, Layout, Menu, Modal, Popover} from 'antd'
 import './header.css'
 import {TaobaoCircleFilled, MessageOutlined, SettingOutlined, ImportOutlined, HomeOutlined} from "@ant-design/icons"
-import {Link, useHistory} from 'react-router-dom'
+import {Link, useHistory, useLocation} from 'react-router-dom'
 
-const Header = ({visible, setVisible, setUserLike, loginStatus, setSongData, setLoginStatus, setMymusic, setCookie, setPlay, setComment}) => {
+const Header = ({visible, setVisible, setUserLike, loginStatus, setSongData, setLoginStatus, setMymusic, setCookie, setPlay, setComment, cookie}) => {
 
+    const loc = useLocation();
     const history = useHistory();
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const {Search} = Input
     const {Header} = Layout;
     const {Item} = Menu;
-
-    const value1 = useRef("");
 
     const login = async () => {
         const res = await fetch(`http://localhost:3000/login/cellphone?phone=${phone}&password=${password}`, {
@@ -23,46 +22,43 @@ const Header = ({visible, setVisible, setUserLike, loginStatus, setSongData, set
             },
             body: JSON.stringify({"phone": phone, "password": password}),
             mode: "cors",
-            credentials : "include"
+            credentials: "include"
         });
         const data = await res.json();
+        setCookie(data.cookie);
+        localStorage.neteaseCookie = data.cookie;
         setVisible(false);
         setLoginStatus(data);
-        const res2 = await fetch("http://localhost:3000/login/refresh",{credentials:"include",mode:"cors"});
-        const data2 = await res2.json();
-        console.log(data);
-        const res1 = await fetch("http://localhost:3000/login/status", {credentials: "include", mode: "cors"});
-        const data1= await res1.json();
-        console.log(data1);
     }
 
     const search = async (value) => {
-        const res = await fetch(`http://localhost:3000/search?keywords=${value}`);
+        const res = await fetch(`http://localhost:3000/search?keywords=${value}&cookie=${cookie}`);
         const data = await res.json();
         setSongData(data.result.songs);
     }
 
     const logout = async () => {
-        const res = await fetch("http://localhost:3000/logout");
+        const res = await fetch(`http://localhost:3000/logout?cookie=${cookie}`);
         const data = await res.json();
-        const res1 = await fetch("http://localhost:3000/login/refresh",{credentials:"include",mode:"cors"});
-        const data1 = await res1.json();
-        console.log(data1);
+        if(data.code === 200) {
+            setLoginStatus({code:301});
+        }
     }
 
     const mymusic = async () => {
-        const res = await fetch(`http://localhost:3000/user/playlist?uid=${loginStatus.profile.userId}`);
+        const res = await fetch(`http://localhost:3000/user/playlist?uid=${loginStatus.profile.userId}&cookie=${cookie}`);
         const data = await res.json();
         setMymusic(data);
-        const res2 = await fetch(`http://localhost:3000/playlist/detail?id=${data.playlist[0].id}`, {
+        const res2 = await fetch(`http://localhost:3000/playlist/detail?id=${data.playlist[0].id}&cookie=${cookie}`, {
             credentials: "include",
             mode: "cors"
         });
         const data2 = await res2.json();
         setPlay(data2.playlist);
-        const res1 = await fetch(`http://localhost:3000/comment/playlist?id=${data.playlist[0].id}`);
+        const res1 = await fetch(`http://localhost:3000/comment/playlist?id=${data.playlist[0].id}&cookie=${cookie}`);
         const data1 = await res1.json();
         setComment(data1);
+        history.push(`/mymusic/${data.playlist[0].id}/${cookie}`)
     }
 
     const content = (
@@ -78,19 +74,28 @@ const Header = ({visible, setVisible, setUserLike, loginStatus, setSongData, set
     )
 
     return (
-        <div style={{marginBottom:"68px"}}>
-            <Header style={{height: "74px", display: "flex",position:"fixed",width:"100%",zIndex:"100",alignItems:"center",borderBottom:"5px solid #C20C0C" }}>
-                <Menu mode="horizontal" theme='dark' className="menu" defaultSelectedKeys={["find"]} style={{height:"68px"}}>
+        <div style={{marginBottom: "68px"}}>
+            <Header style={{
+                height: "74px",
+                display: "flex",
+                position: "fixed",
+                width: "100%",
+                zIndex: "100",
+                alignItems: "center",
+                borderBottom: "5px solid #C20C0C"
+            }}>
+                <Menu mode="horizontal" theme='dark' className="menu" defaultSelectedKeys={[loc.pathname.split('/')[1]]}
+                      style={{height: "68px"}}>
                     <Item disabled icon={<TaobaoCircleFilled
                         style={{
                             fontSize: "30px",
                             color: "#f83d3d",
                             marginLeft: "11vw",
-                            verticalAlign:"middle"
+                            verticalAlign: "middle"
                         }}/>}><span
                         style={{fontFamily: "title", fontSize: "18px", color: "white"}}>网易云音乐</span></Item>
-                    <Item key="find"><Link to='/'><span>发现音乐</span></Link></Item>
-                    <Item key="my" onClick={mymusic}><Link to='/mymusic'><span>我的音乐</span></Link></Item>
+                    <Item key="/"><Link to='/'><span>发现音乐</span></Link></Item>
+                    <Item key="mymusic" onClick={mymusic}><span>我的音乐</span></Item>
                     <Item key="friend"><span>朋友</span></Item>
                     <Item key="shop"><span>商城</span></Item>
                     <Item key="musician"><span>音乐人</span></Item>
@@ -101,7 +106,7 @@ const Header = ({visible, setVisible, setUserLike, loginStatus, setSongData, set
                                 search(value);
                                 history.push(`/search?keywords=${value}`);
                             }}
-                            enterButton style={{width: "250px",verticalAlign:"middle",display:"block"}}></Search>
+                            enterButton style={{width: "250px", verticalAlign: "middle", display: "block"}}></Search>
                 </div>
                 <Button shape="round" style={{
                     marginLeft: "20px",

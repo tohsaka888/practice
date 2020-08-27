@@ -2,10 +2,10 @@ import React from 'react';
 import {Button, Col, Empty, Row} from "antd";
 import {PlayCircleOutlined} from '@ant-design/icons'
 
-const Search = ({songData, setMusicSrc}) => {
+const Search = ({songData, setMusicSrc, cookie}) => {
 
     const play = async (id) => {
-        const res = await fetch(`http://localhost:3000/song/url?id=${id}`);
+        const res = await fetch(`http://localhost:3000/song/url?id=${id}&cookie=${cookie}`);
         const data = await res.json();
         setMusicSrc(data.data[0].url);
     }
