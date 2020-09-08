@@ -13,7 +13,7 @@
 }
 
 .icon {
-    margin-top: 20vh;
+    margin-top: 15vh;
     font-weight: bold;
 }
 
@@ -35,3 +35,7 @@
     border-radius: 10px;
 }
 
+.loginStatus {
+    width: 15vw;
+    background-image: radial-gradient(#adadad,black);
+}

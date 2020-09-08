@@ -1,6 +1,6 @@
 import React from 'react';
-import {Carousel, Col, Layout, Menu, Row, Tabs, Collapse} from "antd"
-import {EnvironmentOutlined, LeftOutlined, RightOutlined} from "@ant-design/icons"
+import {Carousel, Col, Layout, Menu, Row, Tabs, Collapse, Avatar, Button, message} from "antd"
+import {EnvironmentOutlined, LeftOutlined, RightOutlined, UserOutlined} from "@ant-design/icons"
 import {useHistory} from 'react-router-dom'
 import "./content.css"
 import Toplist from "./toplist";
@@ -25,22 +25,55 @@ const Content = ({setSongUrl, toplistSongs2, toplistSongs1, toplistSongs, toplis
         history.push(`/playlist/${id}/${cookie}`);
     }
 
+    const sign = async () => {
+        const res = await fetch(`http://localhost:3000/daily_signin?type=1`,{
+            mode : "cors",
+            credentials : "include"
+        });
+        const data = await res.json();
+        console.log(data)
+        if(data.code === 200) {
+            message.success("签到成功，积分+2！");
+        }else if (data.code === -2) {
+            message.warn("您已经签到过了，明天再来吧~")
+        }else if (data.code === 301) {
+            message.error("请先登录哦~");
+        }
+    }
+
     return (
         <div>
-            <div style={{display: "inline-flex", height: "52.2vh", overflow: "hidden"}} className="lunbo">
-                <div className="div" style={{width: "15vw", height: "52.2vh"}}>
+            <div style={{display: "inline-flex", height: "40vh", overflow: "hidden"}} className="lunbo">
+                <div className="div" style={{width: "15vw", height: "40vh"}}>
                     <LeftOutlined style={{fontSize: "51px", float: "right", marginRight: "20px"}} className="icon"
                                   onClick={() => {
                                       img.current.prev()
                                   }}/>
                 </div>
-                <Carousel autoplay ref={img} style={{width: "70vw"}}>
+                <Carousel autoplay ref={img} style={{width: "55vw"}}>
                     {banner.map((item, index) => {
-                        return <img src={item.imageUrl} key={index} alt={index}
-                                    style={{width: "70vw", height: "52vh"}}/>
+                        return <img src={item.imageUrl} key={index} alt={index}/>
                     })}
                 </Carousel>
-                <div className="div" style={{width: "15vw", height: "52.2vh"}}><RightOutlined
+                <div className="loginStatus">
+                    {loginStatus.code === 200 &&
+                    <Avatar src={loginStatus.profile.avatarUrl} style={{marginTop: "50px"}} size={50}/>}
+                    {!(loginStatus.code === 200) && <Avatar icon={<UserOutlined/>} style={{marginTop: "50px"}} size={50}/>}
+                    <div style={{marginTop: "20px"}}>
+                        <span style={{fontSize: "22px", fontFamily: "text", color: "white"}}>欢迎，</span>
+                        {loginStatus.code === 200 && <span style={{
+                            fontSize: "22px",
+                            fontFamily: "text",
+                            color: "white"
+                        }}>{loginStatus.profile.nickname} !</span>}
+                        {!(loginStatus.code === 200) &&
+                        <span style={{fontSize: "22px", fontFamily: "text", color: "white"}}>游客账户 !</span>}
+                        <div>
+                            <Button size={"large"} shape={"round"} type={"primary"} style={{marginTop:"20px",width:"80%",fontWeight:"bolder"}} onClick={()=>{sign()}}>签到</Button>
+                        </div>
+                    </div>
+                </div>
+                <div className="div" style={{width: "15vw", height: "40vh"}}><RightOutlined
                     style={{fontSize: "51px", float: "left", marginLeft: "20px"}} className="icon" onClick={() => {
                     img.current.next()
                 }}/></div>
@@ -52,7 +85,6 @@ const Content = ({setSongUrl, toplistSongs2, toplistSongs1, toplistSongs, toplis
                 </Menu>
                 <Row style={{marginTop: "20px"}}>
                     {playlist.slice(0, 6).map((item, index) => {
-
                         return (
                             <Col span={4} key={index}>
                                 <img className="playlist" src={item.coverImgUrl} style={{
@@ -78,7 +110,7 @@ const Content = ({setSongUrl, toplistSongs2, toplistSongs1, toplistSongs, toplis
                 <Row>
                     {playlist.slice(6, 12).map((item, index) => {
                         return (
-                            <Col span={4} key={index} style={{marginTop: "20px"}}>
+                            <Col span={4} key={index}>
                                 <img className="playlist" src={item.coverImgUrl} style={{
                                     width: "140px",
                                     height: "140px",

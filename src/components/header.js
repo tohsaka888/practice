@@ -42,6 +42,8 @@ const Header = ({visible, setVisible, setUserLike, loginStatus, setSongData, set
         const data = await res.json();
         if(data.code === 200) {
             setLoginStatus({code:301});
+            localStorage.neteaseCookie = "";
+            setCookie("");
         }
     }
 
@@ -104,7 +106,7 @@ const Header = ({visible, setVisible, setUserLike, loginStatus, setSongData, set
                     <Search placeholder="音乐/视频/电台/用户 "
                             onSearch={(value) => {
                                 search(value);
-                                history.push(`/search?keywords=${value}`);
+                                history.push(`/search/${value}`);
                             }}
                             enterButton style={{width: "250px", verticalAlign: "middle", display: "block"}}></Search>
                 </div>

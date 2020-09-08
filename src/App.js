@@ -139,8 +139,8 @@ function App() {
                                                                      play={play} setComment={setComment}
                                                                      setPlay={setPlay} setMymusic={setMymusic}
                                                                      cookie={cookie}/></Route>
-                            <Route path={`/search`}><Search songData={songData} setMusicSrc={setMusicSrc}
-                                                            cookie={cookie}/></Route>
+                            <Route path={`/search/:keywords`}><Search songData={songData} setMusicSrc={setMusicSrc}
+                                                            cookie={cookie} setSongData={setSongData}/></Route>
                             <Route path={`/playlist/:id/:cookie`}>
                                 <PlayList setMusicUrl={setMusicSrc} loginStatus={loginState}
                                           comment={comment} setComment={setComment} margin="15vw"/>

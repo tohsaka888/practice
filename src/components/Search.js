@@ -1,8 +1,9 @@
-import React from 'react';
-import {Button, Col, Empty, Row} from "antd";
+import React, {useEffect} from 'react';
+import {Button, Col, Empty, Row, Input} from "antd";
 import {PlayCircleOutlined} from '@ant-design/icons'
+import {useParams} from 'react-router-dom'
 
-const Search = ({songData, setMusicSrc, cookie}) => {
+const Search = ({songData, setMusicSrc, cookie, setSongData}) => {
 
     const play = async (id) => {
         const res = await fetch(`http://localhost:3000/song/url?id=${id}&cookie=${cookie}`);
@@ -10,14 +11,38 @@ const Search = ({songData, setMusicSrc, cookie}) => {
         setMusicSrc(data.data[0].url);
     }
 
+    const {Search} = Input;
+    const {keywords} = useParams();
+
+    const search = async (value) => {
+        const res = await fetch(`http://localhost:3000/search?keywords=${value}&cookie=${cookie}`);
+        const data = await res.json();
+        console.log(data)
+        setSongData(data.result.songs);
+    }
+
+    useEffect(()=>{
+        const search = async () => {
+            const res = await fetch(`http://localhost:3000/search?keywords=${keywords}`);
+            const data = await res.json();
+            setSongData(data.result.songs);
+        }
+        search();
+    },[keywords,setSongData])
+
     return (
         <div style={{
             marginTop: "20px",
             marginBottom: "20px",
             backgroundColor: "white",
-            marginLeft: "250px",
-            marginRight: "250px"
+            marginLeft: "15vw",
+            marginRight: "15vw"
         }}>
+            <div style={{height:"20px",background:"#f0f2f5"}}/>
+            <div style={{paddingLeft:"10vw",paddingRight:"10vw",background:"#f0f2f5"}}>
+                <Search defaultValue={keywords} enterButton size={"large"} onSearch={value => search(value)}/>
+            </div>
+            <div style={{height:"40px",background:"#f0f2f5"}}/>
             <Row style={{borderBottom: "2px solid red", fontSize: "20px", fontFamily: "title2", borderRadius: "5px",marginTop:"0px"}}
                  className="row">
                 <Col span={1}/>
